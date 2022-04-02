@@ -12,7 +12,7 @@ import { ORDER_PACKAGE_NAME, ORDER_SERVICE_NAME } from './order.pb';
         options: {
           url: '0.0.0.0:50052',
           package: ORDER_PACKAGE_NAME,
-          protoPath: 'node_modules/grpc-nest-proto/proto/order.proto',
+          protoPath: '../grpc-proto/proto/order.proto',
         },
       },
     ]),
