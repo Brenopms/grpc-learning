@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';;
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { RequestModel } from 'src/common/requestModel';
 import { AuthService } from './auth.service';
 
