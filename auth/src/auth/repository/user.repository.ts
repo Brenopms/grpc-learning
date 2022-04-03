@@ -13,11 +13,19 @@ export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOne(id: string): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: {
-        id: {
-          equals: id,
-        },
+        id: id,
+      },
+    });
+
+    return user;
+  }
+
+  async findByEmail(email: User['email']): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
       },
     });
 
