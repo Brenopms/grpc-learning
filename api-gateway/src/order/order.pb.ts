@@ -9,7 +9,7 @@ export const protobufPackage = 'order';
 export interface CreateOrderRequest {
   productId: number;
   quantity: number;
-  userId: number;
+  userId: string;
 }
 
 export interface CreateOrderResponse {
@@ -27,37 +27,20 @@ export interface OrderServiceClient {
 export interface OrderServiceController {
   createOrder(
     request: CreateOrderRequest,
-  ):
-    | Promise<CreateOrderResponse>
-    | Observable<CreateOrderResponse>
-    | CreateOrderResponse;
+  ): Promise<CreateOrderResponse> | Observable<CreateOrderResponse> | CreateOrderResponse;
 }
 
 export function OrderServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ['createOrder'];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcMethod('OrderService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod('OrderService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcStreamMethod('OrderService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod('OrderService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }

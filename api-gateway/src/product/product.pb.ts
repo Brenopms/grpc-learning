@@ -49,62 +49,36 @@ export interface DecreaseStockResponse {
 export const PRODUCT_PACKAGE_NAME = 'product';
 
 export interface ProductServiceClient {
-  createProduct(
-    request: CreateProductRequest,
-  ): Observable<CreateProductResponse>;
+  createProduct(request: CreateProductRequest): Observable<CreateProductResponse>;
 
   findOne(request: FindOneRequest): Observable<FindOneResponse>;
 
-  decreaseStock(
-    request: DecreaseStockRequest,
-  ): Observable<DecreaseStockResponse>;
+  decreaseStock(request: DecreaseStockRequest): Observable<DecreaseStockResponse>;
 }
 
 export interface ProductServiceController {
   createProduct(
     request: CreateProductRequest,
-  ):
-    | Promise<CreateProductResponse>
-    | Observable<CreateProductResponse>
-    | CreateProductResponse;
+  ): Promise<CreateProductResponse> | Observable<CreateProductResponse> | CreateProductResponse;
 
-  findOne(
-    request: FindOneRequest,
-  ): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
+  findOne(request: FindOneRequest): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
 
   decreaseStock(
     request: DecreaseStockRequest,
-  ):
-    | Promise<DecreaseStockResponse>
-    | Observable<DecreaseStockResponse>
-    | DecreaseStockResponse;
+  ): Promise<DecreaseStockResponse> | Observable<DecreaseStockResponse> | DecreaseStockResponse;
 }
 
 export function ProductServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ['createProduct', 'findOne', 'decreaseStock'];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcMethod('ProductService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod('ProductService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcStreamMethod('ProductService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod('ProductService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
