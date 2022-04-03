@@ -3,7 +3,6 @@ import { User } from './auth.entity';
 import { LoginRequest, RegisterRequest, ValidateRequest } from './auth.pb';
 
 export class LoginRequestDto implements LoginRequest {
-  @IsEmail()
   @MaxLength(50)
   public readonly username: User['username'];
 
