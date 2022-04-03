@@ -24,11 +24,11 @@ export class JwtService {
     return this.jwt.sign({ id: user.id, email: user.email, username: user.username });
   }
 
-  public async isPasswordValid(password: User['password'], userPassword: User['password']): Promise<boolean> {
+  public async isPasswordValid(password: User['password'], requestPassword: User['password']): Promise<boolean> {
     const [salt, key] = password.split(':');
     const keyBuffer = Buffer.from(key, 'hex');
 
-    const derivedKey = (await scryptAsync(userPassword, salt, 64)) as NodeJS.ArrayBufferView;
+    const derivedKey = (await scryptAsync(requestPassword, salt, 64)) as NodeJS.ArrayBufferView;
 
     return timingSafeEqual(keyBuffer, derivedKey);
   }

@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { RegisterRequestDto } from '../auth.dto';
-import { RegisterResponse } from '../auth.pb';
+import { LoginRequestDto, RegisterRequestDto } from '../auth.dto';
+import { User } from '../auth.entity';
+import { LoginResponse, RegisterResponse } from '../auth.pb';
 import { UserRepository } from '../repository/user.repository';
 import { JwtService } from './jwt.service';
 
@@ -21,5 +22,22 @@ export class AuthService {
     await this.userRepository.insertUser(newUser);
 
     return { status: HttpStatus.CREATED, error: null };
+  }
+
+  public async login({ username, password }: LoginRequestDto): Promise<LoginResponse> {
+    const user: User = await this.userRepository.findByUsername(username);
+
+    if (!user) {
+      return { status: HttpStatus.NOT_FOUND, error: ['Invalid Username or Password'], token: null };
+    }
+
+    const isPasswordValid = await this.jwtService.isPasswordValid(user.password, password);
+    if (!isPasswordValid) {
+      return { status: HttpStatus.NOT_FOUND, error: ['Invalid Username or Password'], token: null };
+    }
+
+    const token = this.jwtService.generateToken(user);
+
+    return { token, status: HttpStatus.OK, error: null };
   }
 }
