@@ -35,7 +35,7 @@ export class JwtService {
 
   public async encodePassword(password: User['password']): Promise<string> {
     const salt = randomBytes(SALT_LENGTH).toString('hex');
-    const hash = scryptAsync(password, salt, 64);
+    const hash = await scryptAsync(password, salt, 64);
     return `${salt}:${hash}`;
   }
 
