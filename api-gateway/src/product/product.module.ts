@@ -1,21 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ORDER_PACKAGE_NAME, ORDER_SERVICE_NAME } from 'src/order/order.pb';
+import { AuthModule } from 'src/auth/auth.module';
 import { ProductController } from './product.controller';
+import { PRODUCT_PACKAGE_NAME, PRODUCT_SERVICE_NAME } from './product.pb';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: ORDER_SERVICE_NAME,
+        name: PRODUCT_SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
           url: '0.0.0.0:50053',
-          package: ORDER_PACKAGE_NAME,
+          package: PRODUCT_PACKAGE_NAME,
           protoPath: '../grpc-proto/proto/product.proto',
         },
       },
     ]),
+    AuthModule,
   ],
   controllers: [ProductController],
 })
