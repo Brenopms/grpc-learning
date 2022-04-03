@@ -6,6 +6,8 @@ import { User } from '../auth.entity';
 interface IUserRepository {
   findOne(id: User['id']): Promise<User>;
   insertUser(userDto: RegisterRequestDto): Promise<User>;
+  findByEmail(email: User['email']): Promise<User>;
+  findByUsername(username: User['username']): Promise<User>;
 }
 
 @Injectable()
