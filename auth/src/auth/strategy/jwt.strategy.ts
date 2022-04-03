@@ -7,7 +7,11 @@ import { JwtService } from '../service/jwt.service';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly jwtService: JwtService) {
-    super({ jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), secretOrKey: 'dev', ignoreExpiration: true });
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET,
+      ignoreExpiration: true,
+    });
   }
 
   private validate(token: string): Promise<User | never> {
