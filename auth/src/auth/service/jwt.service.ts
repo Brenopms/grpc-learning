@@ -39,7 +39,7 @@ export class JwtService {
     return `${salt}:${hash}`;
   }
 
-  public async verify(token: string): Promise<any> {
+  public async verify(token: string): Promise<Pick<User, 'id' | 'username' | 'email'>> {
     return await this.jwt.verify(token);
   }
 }

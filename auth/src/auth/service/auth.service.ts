@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoginRequestDto, RegisterRequestDto } from '../auth.dto';
+import { LoginRequestDto, RegisterRequestDto, ValidateRequestDto } from '../auth.dto';
 import { User } from '../auth.entity';
-import { LoginResponse, RegisterResponse } from '../auth.pb';
+import { LoginResponse, RegisterResponse, ValidateResponse } from '../auth.pb';
 import { UserRepository } from '../repository/user.repository';
 import { JwtService } from './jwt.service';
 
@@ -39,5 +39,21 @@ export class AuthService {
     const token = this.jwtService.generateToken(user);
 
     return { token, status: HttpStatus.OK, error: null };
+  }
+
+  public async validate({ token }: ValidateRequestDto): Promise<ValidateResponse> {
+    const decoded = await this.jwtService.verify(token);
+
+    if (!decoded) {
+      return { status: HttpStatus.FORBIDDEN, error: ['Token is invalid'], userId: null };
+    }
+
+    const user: User = await this.jwtService.validateUser(decoded);
+
+    if (!user) {
+      return { status: HttpStatus.NOT_FOUND, error: ['User not found'], userId: null };
+    }
+
+    return { status: HttpStatus.OK, error: null, userId: user.id };
   }
 }
