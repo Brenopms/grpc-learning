@@ -18,7 +18,7 @@ export class ProductController implements OnModuleInit {
   private readonly client: ClientGrpc;
 
   public onModuleInit(): void {
-    this.productServiceClient = this.client.getClientByServiceName<ProductServiceClient>(PRODUCT_SERVICE_NAME);
+    this.productServiceClient = this.client.getService<ProductServiceClient>(PRODUCT_SERVICE_NAME);
   }
 
   @Post()

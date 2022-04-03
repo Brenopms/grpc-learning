@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, OnModuleInit, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Inject, OnModuleInit, Post, Put } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -18,7 +18,7 @@ export class AuthController implements OnModuleInit {
   private readonly client: ClientGrpc;
 
   public onModuleInit(): void {
-    this.authServiceClient = this.client.getClientByServiceName<AuthServiceClient>(AUTH_SERVICE_NAME);
+    this.authServiceClient = this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
 
   @Post('register')

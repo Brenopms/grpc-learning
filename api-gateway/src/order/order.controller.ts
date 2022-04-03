@@ -13,7 +13,7 @@ export class OrderController implements OnModuleInit {
   private readonly client: ClientGrpc;
 
   public onModuleInit(): void {
-    this.orderServiceClient = this.client.getClientByServiceName(ORDER_SERVICE_NAME);
+    this.orderServiceClient = this.client.getService(ORDER_SERVICE_NAME);
   }
 
   @Post()

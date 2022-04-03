@@ -11,7 +11,7 @@ export class AuthService {
   private readonly client: ClientGrpc;
 
   public onModuleInit(): void {
-    this.authServiceClient = this.client.getClientByServiceName<AuthServiceClient>(AUTH_SERVICE_NAME);
+    this.authServiceClient = this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
 
   public async validate(token: string): Promise<ValidateResponse> {
