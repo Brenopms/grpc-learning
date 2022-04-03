@@ -16,6 +16,12 @@ export class AuthService {
       return { status: HttpStatus.CONFLICT, error: ['Email already exists'] };
     }
 
+    const userWithUsername = await this.userRepository.findByUsername(username);
+
+    if (userWithUsername) {
+      return { status: HttpStatus.CONFLICT, error: ['Username already exists'] };
+    }
+
     const hashedPassword = await this.jwtService.encodePassword(password);
     const newUser: RegisterRequestDto = { username, email, password: hashedPassword };
 
