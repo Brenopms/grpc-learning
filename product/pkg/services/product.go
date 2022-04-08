@@ -13,12 +13,12 @@ type Server struct {
 	H db.Handler
 }
 
-func (s *Server) CreateProduct(ctz context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
+func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	var product models.Product
 
 	product.Name = req.Name
-	product.Stock = int64(req.Stock)
-	product.Price = int64(req.Stock)
+	product.Stock = req.Stock
+	product.Price = req.Stock
 	product.Sku = req.Sku
 
 	if result := s.H.DB.Create(&product); result.Error != nil {
