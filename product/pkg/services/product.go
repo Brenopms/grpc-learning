@@ -11,6 +11,7 @@ import (
 
 type Server struct {
 	DbHandler db.Handler
+	pb.UnimplementedProductServiceServer
 }
 
 func (server *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
@@ -57,7 +58,7 @@ func (server *Server) FindOne(ctx context.Context, req *pb.FindOneRequest) (*pb.
 	}, nil
 }
 
-func (server *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest) (*pb.DecreaseStockResponse, error) {
+func (server *Server) DecreaseStock(ctx context.Context, req *pb.DecreaseStockRequest) (*pb.DecreaseStockResponse, error) {
 	var product models.Product
 	var decreaseStockLog models.StockDecreaseLog
 
