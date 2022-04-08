@@ -1,7 +1,7 @@
 package models
 
 type StockDecreaseLog struct {
-	Id        int64 `json:"id" gorm:"primaryKey"`
-	OrderId   int64 `json:"order_id"`
-	ProductId int64 `json:"product_id"`
+	Id        int32 `json:"id" gorm:"primaryKey"`
+	OrderId   int32 `json:"order_id"`
+	ProductId int32 `json:"product_id"`
 }
