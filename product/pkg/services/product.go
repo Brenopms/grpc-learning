@@ -10,18 +10,18 @@ import (
 )
 
 type Server struct {
-	H db.Handler
+	DbHandler db.Handler
 }
 
-func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
+func (server *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	var product models.Product
 
 	product.Name = req.Name
 	product.Stock = req.Stock
-	product.Price = req.Stock
+	product.Price = req.Price
 	product.Sku = req.Sku
 
-	if result := s.H.DB.Create(&product); result.Error != nil {
+	if result := server.DbHandler.DB.Create(&product); result.Error != nil {
 		return &pb.CreateProductResponse{
 			Status: http.StatusConflict,
 			Error:  []string{result.Error.Error()},
@@ -34,10 +34,10 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 	}, nil
 }
 
-func (s *Server) FindOne(ctx context.Context, req *pb.FindOneRequest) (*pb.FindOneResponse, error) {
+func (server *Server) FindOne(ctx context.Context, req *pb.FindOneRequest) (*pb.FindOneResponse, error) {
 	var product models.Product
 
-	if result := s.H.DB.First(&product, req.Id); result.Error != nil {
+	if result := server.DbHandler.DB.First(&product, req.Id); result.Error != nil {
 		return &pb.FindOneResponse{
 			Status: http.StatusNotFound,
 			Error:  []string{result.Error.Error()},
@@ -57,11 +57,11 @@ func (s *Server) FindOne(ctx context.Context, req *pb.FindOneRequest) (*pb.FindO
 	}, nil
 }
 
-func (s *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest) (*pb.DecreaseStockResponse, error) {
+func (server *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest) (*pb.DecreaseStockResponse, error) {
 	var product models.Product
 	var decreaseStockLog models.StockDecreaseLog
 
-	if result := s.H.DB.First(&product, req.Id); result.Error != nil {
+	if result := server.DbHandler.DB.First(&product, req.Id); result.Error != nil {
 		return &pb.DecreaseStockResponse{
 			Status: http.StatusNotFound,
 			Error:  []string{result.Error.Error()},
@@ -76,7 +76,7 @@ func (s *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest
 	}
 
 	// Check if the order request was already processed and already decreased a quantity
-	if result := s.H.DB.Where(&models.StockDecreaseLog{OrderId: req.OrderId}).First(&decreaseStockLog); result.Error != nil {
+	if result := server.DbHandler.DB.Where(&models.StockDecreaseLog{OrderId: req.OrderId}).First(&decreaseStockLog); result.Error != nil {
 		return &pb.DecreaseStockResponse{
 			Status: http.StatusConflict,
 			Error:  []string{"Stock already decreased"},
@@ -85,12 +85,12 @@ func (s *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest
 
 	product.Stock = product.Stock - 1
 
-	s.H.DB.Save(&product)
+	server.DbHandler.DB.Save(&product)
 
 	decreaseStockLog.OrderId = req.OrderId
 	decreaseStockLog.ProductId = product.Id
 
-	s.H.DB.Create(&decreaseStockLog)
+	server.DbHandler.DB.Create(&decreaseStockLog)
 
 	return &pb.DecreaseStockResponse{
 		Status: http.StatusOK,
