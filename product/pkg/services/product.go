@@ -33,3 +33,67 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 		Id:     int32(product.Id),
 	}, nil
 }
+
+func (s *Server) FindOne(ctx context.Context, req *pb.FindOneRequest) (*pb.FindOneResponse, error) {
+	var product models.Product
+
+	if result := s.H.DB.First(&product, req.Id); result.Error != nil {
+		return &pb.FindOneResponse{
+			Status: http.StatusNotFound,
+			Error:  []string{result.Error.Error()},
+		}, nil
+	}
+
+	data := &pb.FindOneData{
+		Id:    product.Id,
+		Name:  product.Name,
+		Stock: product.Stock,
+		Price: product.Price,
+	}
+
+	return &pb.FindOneResponse{
+		Status: http.StatusOK,
+		Data:   data,
+	}, nil
+}
+
+func (s *Server) decreaseStock(ctx context.Context, req *pb.DecreaseStockRequest) (*pb.DecreaseStockResponse, error) {
+	var product models.Product
+	var decreaseStockLog models.StockDecreaseLog
+
+	if result := s.H.DB.First(&product, req.Id); result.Error != nil {
+		return &pb.DecreaseStockResponse{
+			Status: http.StatusNotFound,
+			Error:  []string{result.Error.Error()},
+		}, nil
+	}
+
+	if product.Stock <= 0 {
+		return &pb.DecreaseStockResponse{
+			Status: http.StatusConflict,
+			Error:  []string{"stock too low"},
+		}, nil
+	}
+
+	// Check if the order request was already processed and already decreased a quantity
+	if result := s.H.DB.Where(&models.StockDecreaseLog{OrderId: req.OrderId}).First(&decreaseStockLog); result.Error != nil {
+		return &pb.DecreaseStockResponse{
+			Status: http.StatusConflict,
+			Error:  []string{"Stock already decreased"},
+		}, nil
+	}
+
+	product.Stock = product.Stock - 1
+
+	s.H.DB.Save(&product)
+
+	decreaseStockLog.OrderId = req.OrderId
+	decreaseStockLog.ProductId = product.Id
+
+	s.H.DB.Create(&decreaseStockLog)
+
+	return &pb.DecreaseStockResponse{
+		Status: http.StatusOK,
+	}, nil
+
+}
