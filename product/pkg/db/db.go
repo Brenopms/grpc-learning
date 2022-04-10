@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	"github.com/Brenopms/grpc-learning/pkg/models"
+	"github.com/Brenopms/grpc-learning/product/pkg/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

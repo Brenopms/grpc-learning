@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	"github.com/Brenopms/grpc-learning/pkg/db"
-	"github.com/Brenopms/grpc-learning/pkg/models"
-	"github.com/Brenopms/grpc-learning/pkg/pb"
+	"github.com/Brenopms/grpc-learning/product/pkg/db"
+	"github.com/Brenopms/grpc-learning/product/pkg/models"
+	"github.com/Brenopms/grpc-learning/product/pkg/pb"
 )
 
 type Server struct {

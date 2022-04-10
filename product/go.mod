@@ -1,4 +1,4 @@
-module github.com/Brenopms/grpc-learning
+module github.com/Brenopms/grpc-learning/product
 
 go 1.17
 

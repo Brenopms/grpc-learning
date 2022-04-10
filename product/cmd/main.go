@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 
-	"github.com/Brenopms/grpc-learning/pkg/config"
-	"github.com/Brenopms/grpc-learning/pkg/db"
-	"github.com/Brenopms/grpc-learning/pkg/pb"
-	"github.com/Brenopms/grpc-learning/pkg/services"
+	"github.com/Brenopms/grpc-learning/product/pkg/config"
+	"github.com/Brenopms/grpc-learning/product/pkg/db"
+	"github.com/Brenopms/grpc-learning/product/pkg/pb"
+	"github.com/Brenopms/grpc-learning/product/pkg/services"
 	"google.golang.org/grpc"
 )
 
