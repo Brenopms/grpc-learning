@@ -16,7 +16,7 @@ func main() {
 	envConfig, err := config.LoadConfig()
 
 	if err != nil {
-		log.Fatalln("Could not load environment configuration")
+		log.Fatalln("Could not load environment configuration: ", err)
 	}
 
 	dbHandler := db.Init(envConfig.DBUrl)
