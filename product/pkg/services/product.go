@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
+
 	"github.com/Brenopms/grpc-learning/pkg/db"
 	"github.com/Brenopms/grpc-learning/pkg/models"
 	"github.com/Brenopms/grpc-learning/pkg/pb"
@@ -14,6 +16,18 @@ type Server struct {
 	pb.UnimplementedProductServiceServer
 }
 
+var validate *validator.Validate
+
+func getValidationErrors(err error) []string {
+	requestErrors := []string{}
+	validationErrors := err.(validator.ValidationErrors)
+	for _, validationError := range validationErrors {
+		requestErrors = append(requestErrors, validationError.Error())
+	}
+
+	return requestErrors
+}
+
 func (server *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	var product models.Product
 
@@ -21,6 +35,18 @@ func (server *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRe
 	product.Stock = req.Stock
 	product.Price = req.Price
 	product.Sku = req.Sku
+
+	validate = validator.New()
+	err := validate.Struct(product)
+
+	if err != nil {
+		validationErrors := getValidationErrors(err)
+
+		return &pb.CreateProductResponse{
+			Status: http.StatusBadRequest,
+			Error:  validationErrors,
+		}, nil
+	}
 
 	if result := server.DbHandler.DB.Create(&product); result.Error != nil {
 		return &pb.CreateProductResponse{
