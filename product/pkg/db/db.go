@@ -19,8 +19,12 @@ func Init(url string) Handler {
 		log.Fatalln(err)
 	}
 
+	log.Println("Initializing Migrations")
+
 	db.AutoMigrate(&models.Product{})
 	db.AutoMigrate(&models.StockDecreaseLog{})
+
+	log.Println("Migrations are done")
 
 	return Handler{db}
 }
