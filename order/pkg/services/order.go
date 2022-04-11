@@ -30,15 +30,11 @@ func getValidationErrors(err error) []string {
 }
 
 func (server *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
-	product, err := server.ProductServiceClient.FindOne(req.ProductId)
-
-	if err != nil {
-		return &pb.CreateOrderResponse{Status: http.StatusBadRequest, Error: []string{err.Error()}}, nil
-	} else if product.Status == http.StatusNotFound {
-		return &pb.CreateOrderResponse{Status: product.Status, Error: product.Error}, nil
-	} else if product.Data.Stock < req.Quantity {
-		return &pb.CreateOrderResponse{Status: http.StatusConflict, Error: []string{"Not enough stock for the requested product"}}, nil
+	// Checking if product id was not sent in the request
+	if req.ProductId == 0 {
+		return &pb.CreateOrderResponse{Status: http.StatusConflict, Error: []string{"Invalid Product Id Requested"}}, nil
 	}
+	product, err := server.ProductServiceClient.FindOne(req.ProductId)
 
 	order := models.Order{
 		Price:     product.Data.Price,
@@ -56,6 +52,14 @@ func (server *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderReques
 			Status: http.StatusBadRequest,
 			Error:  validationErrors,
 		}, nil
+	}
+
+	if err != nil {
+		return &pb.CreateOrderResponse{Status: http.StatusBadRequest, Error: []string{err.Error()}}, nil
+	} else if product.Status == http.StatusNotFound {
+		return &pb.CreateOrderResponse{Status: product.Status, Error: product.Error}, nil
+	} else if product.Data.Stock < req.Quantity {
+		return &pb.CreateOrderResponse{Status: http.StatusConflict, Error: []string{"Not enough stock for the requested product"}}, nil
 	}
 
 	server.DbHandler.DB.Create(&order)
