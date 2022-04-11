@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"log"
 
 	"github.com/Brenopms/grpc-learning/order/pkg/pb"
 	"google.golang.org/grpc"
@@ -12,18 +11,18 @@ type ProductServiceClient struct {
 	Client pb.ProductServiceClient
 }
 
-func InitProductServiceClient(url string) ProductServiceClient {
-	clientConn, err := grpc.Dial(url, grpc.WithInsecure)
+func InitProductServiceClient(url string) (productServiceClient ProductServiceClient, err error) {
+	clientConn, err := grpc.Dial(url, grpc.WithInsecure())
 
 	if err != nil {
-		log.Println("Could not connect to Product Service:", err)
+		return
 	}
 
 	client := ProductServiceClient{
 		Client: pb.NewProductServiceClient(clientConn),
 	}
 
-	return client
+	return client, nil
 }
 
 func (productServiceClient *ProductServiceClient) FindOne(productId int32) (*pb.FindOneResponse, error) {
