@@ -11,7 +11,7 @@ import { ORDER_PACKAGE_NAME, ORDER_SERVICE_NAME } from './order.pb';
         name: ORDER_SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
-          url: '0.0.0.0:50052',
+          url: '0.0.0.0:50053',
           package: ORDER_PACKAGE_NAME,
           protoPath: '../grpc-proto/proto/order.proto',
         },
