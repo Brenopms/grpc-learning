@@ -88,10 +88,11 @@ func (server *Server) DecreaseStock(ctx context.Context, req *pb.DecreaseStockRe
 	var product models.Product
 	var decreaseStockLog models.StockDecreaseLog
 
-	if result := server.DbHandler.DB.First(&product, req.Id); result.Error != nil {
+	productResult := server.DbHandler.DB.First(&product, req.Id)
+	if productResult.Error != nil {
 		return &pb.DecreaseStockResponse{
 			Status: http.StatusNotFound,
-			Error:  []string{result.Error.Error()},
+			Error:  []string{productResult.Error.Error()},
 		}, nil
 	}
 
@@ -103,7 +104,8 @@ func (server *Server) DecreaseStock(ctx context.Context, req *pb.DecreaseStockRe
 	}
 
 	// Check if the order request was already processed and already decreased a quantity
-	if result := server.DbHandler.DB.Where(&models.StockDecreaseLog{OrderId: req.OrderId}).First(&decreaseStockLog); result.Error != nil {
+	stockDecreaseResult := server.DbHandler.DB.Where(&models.StockDecreaseLog{OrderId: req.OrderId}).First(&decreaseStockLog)
+	if stockDecreaseResult.Error == nil {
 		return &pb.DecreaseStockResponse{
 			Status: http.StatusConflict,
 			Error:  []string{"Stock already decreased"},
