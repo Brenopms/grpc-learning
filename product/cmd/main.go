@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 
@@ -27,7 +26,7 @@ func main() {
 		log.Fatalln("Failed to Start TCP Server")
 	}
 
-	fmt.Println("Product Service running on port: ", envConfig.Port)
+	log.Println("Product Service running on port: ", envConfig.Port)
 
 	server := services.Server{
 		DbHandler: dbHandler,
