@@ -29,6 +29,10 @@ func getValidationErrors(err error) []string {
 	return requestErrors
 }
 
+func calculateOrderPrice(productPrice float64, orderQuantity int32) float64 {
+	return productPrice * float64(orderQuantity)
+}
+
 func (server *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
 	// Checking if product id was not sent in the request
 	if req.ProductId == 0 {
@@ -37,9 +41,10 @@ func (server *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderReques
 	product, err := server.ProductServiceClient.FindOne(req.ProductId)
 
 	order := models.Order{
-		Price:     product.Data.Price,
+		Price:     calculateOrderPrice(product.Data.Price, req.Quantity),
 		ProductId: product.Data.Id,
 		UserId:    req.UserId,
+		Quantity:  req.Quantity,
 	}
 
 	validate = validator.New()
