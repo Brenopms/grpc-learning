@@ -6,5 +6,5 @@ type Product struct {
 	Stock             int32            `json:"stock" gorm:"not null" validate:"required,gte=0"`
 	Price             float64          `json:"price" gorm:"not null" validate:"required,gte=0"`
 	Sku               string           `json:"sku" gorm:"not null" validate:"required"`
-	StockDecreaseLogs StockDecreaseLog `gorm:"foreignKey:ProductId"`
+	StockDecreaseLogs StockDecreaseLog `gorm:"foreignKey:ProductId" validate:"-"`
 }
