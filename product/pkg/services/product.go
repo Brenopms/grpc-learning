@@ -96,6 +96,23 @@ func (server *Server) DecreaseStock(ctx context.Context, req *pb.DecreaseStockRe
 		}, nil
 	}
 
+	decreaseStockLog.OrderId = req.OrderId
+	decreaseStockLog.ProductId = product.Id
+	decreaseStockLog.Quantity = req.Quantity
+
+	// Validate if decreaseStockRequest body is valid
+	validate = validator.New()
+	err := validate.Struct(decreaseStockLog)
+
+	if err != nil {
+		validationErrors := getValidationErrors(err)
+
+		return &pb.DecreaseStockResponse{
+			Status: http.StatusBadRequest,
+			Error:  validationErrors,
+		}, nil
+	}
+
 	if product.Stock <= 0 {
 		return &pb.DecreaseStockResponse{
 			Status: http.StatusConflict,
@@ -112,12 +129,13 @@ func (server *Server) DecreaseStock(ctx context.Context, req *pb.DecreaseStockRe
 		}, nil
 	}
 
-	product.Stock = product.Stock - 1
+	product.Stock = product.Stock - req.Quantity
 
 	server.DbHandler.DB.Save(&product)
 
 	decreaseStockLog.OrderId = req.OrderId
 	decreaseStockLog.ProductId = product.Id
+	decreaseStockLog.Quantity = req.Quantity
 
 	server.DbHandler.DB.Create(&decreaseStockLog)
 
